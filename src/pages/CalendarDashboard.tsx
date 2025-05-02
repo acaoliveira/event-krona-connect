@@ -10,6 +10,33 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import SpaceFilter from '@/components/calendar/SpaceFilter';
 
+// Define types for better type checking
+type Event = {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  category: string;
+  audience: string;
+  status: string;
+  spaceId?: string;
+};
+
+type Space = {
+  id: string;
+  name: string;
+  capacity: number;
+};
+
+type CalendarDay = {
+  day: number;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+  spacesWithEvents: Record<string, Event[]>;
+};
+
 const CalendarDashboard = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('calendar');
   const [calendarView, setCalendarView] = useState<'day' | 'week' | 'month'>('month');
@@ -24,7 +51,7 @@ const CalendarDashboard = () => {
   });
 
   // Mock data for events
-  const events = [
+  const events: Event[] = [
     {
       id: '1',
       title: 'Workshop de Inovação Digital',
@@ -98,7 +125,7 @@ const CalendarDashboard = () => {
   ];
 
   // List of available spaces
-  const availableSpaces = [
+  const availableSpaces: Space[] = [
     { id: 'auditorio-principal', name: 'Auditório Principal', capacity: 200 },
     { id: 'sala-reunioes-a', name: 'Sala de Reuniões A', capacity: 50 },
     { id: 'sala-reunioes-b', name: 'Sala de Reuniões B', capacity: 80 },
@@ -131,8 +158,8 @@ const CalendarDashboard = () => {
   });
 
   // Function to get events for a specific day and space
-  const getEventsForDayAndSpace = (day: number, spaceId: string): any[] => {
-    const eventsForDay: any[] = [];
+  const getEventsForDayAndSpace = (day: number, spaceId: string): Event[] => {
+    const eventsForDay: Event[] = [];
     const currentYear = currentMonth.getFullYear();
     const currentMonthNum = currentMonth.getMonth();
     
@@ -226,7 +253,7 @@ const CalendarDashboard = () => {
         const isSelected = selectedDate && selectedDate.toDateString() === current.toDateString();
         
         // Get events for all spaces on this day
-        const spacesWithEvents: Record<string, any[]> = {};
+        const spacesWithEvents: Record<string, Event[]> = {};
         
         availableSpaces.forEach(space => {
           const eventsForSpace = isCurrentMonth 
@@ -533,7 +560,10 @@ const CalendarDashboard = () => {
                                   default: bgColor = '#702082';
                                 }
                                 
-                                return events.map((event: any, index: number) => (
+                                // Cast events from Record<string, unknown> to Event[]
+                                const typedEvents = events as Event[];
+                                
+                                return typedEvents.map((event, index) => (
                                   <div 
                                     key={`${event.id}-${index}`}
                                     className="text-xs p-1 rounded truncate" 
