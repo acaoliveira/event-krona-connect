@@ -163,7 +163,7 @@ const EventRequests = () => {
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os status</SelectItem>
+                    <SelectItem value="all_status">Todos os status</SelectItem>
                     <SelectItem value="Em análise">Em análise</SelectItem>
                     <SelectItem value="Aprovado">Aprovado</SelectItem>
                     <SelectItem value="Reprovado">Reprovado</SelectItem>
@@ -200,10 +200,10 @@ const EventRequests = () => {
                     <SelectValue placeholder="Tipo de Evento" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os tipos</SelectItem>
+                    <SelectItem value="all_types">Todos os tipos</SelectItem>
                     <SelectItem value="interno">Interno</SelectItem>
                     <SelectItem value="externo">Externo</SelectItem>
-                    <SelectItem value="híbrido">Híbrido</SelectItem>
+                    <SelectItem value="hibrido">Híbrido</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -214,7 +214,7 @@ const EventRequests = () => {
                     <SelectValue placeholder="Espaço" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os espaços</SelectItem>
+                    <SelectItem value="all_spaces">Todos os espaços</SelectItem>
                     <SelectItem value="Auditório Principal">Auditório Principal</SelectItem>
                     <SelectItem value="Sala de Reuniões A">Sala de Reuniões A</SelectItem>
                     <SelectItem value="Espaço Colaborativo">Espaço Colaborativo</SelectItem>
