@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,17 +14,20 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* KPMG Blue - HSL equivalent of #00338D */
+    --primary: 222 100% 28%; 
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Light KPMG Blue - HSL equivalent of #0091DA */
+    --secondary: 202 100% 43%;
+    --secondary-foreground: 210 40% 98%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* KPMG Green - HSL equivalent of #00A3A1 */
+    --accent: 179 100% 32%; 
+    --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -98,4 +102,49 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom KPMG styles */
+.text-kpmg-blue {
+  color: #00338D;
+}
+
+.text-kpmg-lightblue {
+  color: #0091DA;
+}
+
+.text-kpmg-green {
+  color: #00A3A1;
+}
+
+.bg-kpmg-blue {
+  background-color: #00338D;
+}
+
+.bg-kpmg-lightblue {
+  background-color: #0091DA;
+}
+
+.bg-kpmg-green {
+  background-color: #00A3A1;
+}
+
+.hover\:bg-kpmg-blue:hover {
+  background-color: #00338D;
+}
+
+.hover\:bg-kpmg-lightblue:hover {
+  background-color: #0091DA;
+}
+
+.hover\:bg-kpmg-green:hover {
+  background-color: #00A3A1;
+}
+
+.border-kpmg-blue {
+  border-color: #00338D;
+}
+
+.hover\:text-kpmg-blue:hover {
+  color: #00338D;
 }
