@@ -1,27 +1,20 @@
-
 import { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Calendar, ListFilter, Grid, ChevronLeft, ChevronRight } from 'lucide-react';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Calendar, ListFilter, Grid, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import SpaceFilter from '@/components/calendar/SpaceFilter';
-import SpaceCalendarView from '@/components/calendar/SpaceCalendarView';
 
 const CalendarDashboard = () => {
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar' | 'space'>('calendar');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('calendar');
+  const [calendarView, setCalendarView] = useState<'day' | 'week' | 'month'>('month');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedSpaceId, setSelectedSpaceId] = useState('all');
   const [filters, setFilters] = useState({
     eventType: '',
     dateFrom: '',
@@ -104,6 +97,16 @@ const CalendarDashboard = () => {
     }
   ];
 
+  // List of available spaces
+  const availableSpaces = [
+    { id: 'auditorio-principal', name: 'Auditório Principal', capacity: 200 },
+    { id: 'sala-reunioes-a', name: 'Sala de Reuniões A', capacity: 50 },
+    { id: 'sala-reunioes-b', name: 'Sala de Reuniões B', capacity: 80 },
+    { id: 'espaco-colaborativo', name: 'Espaço Colaborativo', capacity: 100 },
+    { id: 'sala-treinamento', name: 'Sala de Treinamento', capacity: 40 },
+    { id: 'lounge', name: 'Lounge', capacity: 30 }
+  ];
+
   const handleFilterChange = (key: string, value: string) => {
     setFilters({
       ...filters,
@@ -127,20 +130,36 @@ const CalendarDashboard = () => {
     return matchesEventType && matchesAudience && matchesSpace && matchesDateFrom && matchesDateTo;
   });
 
-  // Function to get events for a specific day (used in calendar view)
-  const getEventsForDay = (day: number): string[] => {
-    const eventsForDay: string[] = [];
+  // Function to get events for a specific day and space
+  const getEventsForDayAndSpace = (day: number, spaceId: string): any[] => {
+    const eventsForDay: any[] = [];
     const currentYear = currentMonth.getFullYear();
     const currentMonthNum = currentMonth.getMonth();
     
     filteredEvents.forEach(event => {
       const eventDate = new Date(event.date);
+      // Map location names to space IDs
+      const spaceMapping: Record<string, string> = {
+        'Auditório Principal': 'auditorio-principal',
+        'Sala de Reuniões A': 'sala-reunioes-a',
+        'Sala de Reuniões B': 'sala-reunioes-b',
+        'Espaço Colaborativo': 'espaco-colaborativo',
+        'Sala de Treinamento': 'sala-treinamento',
+        'Lounge': 'lounge'
+      };
+      
+      const eventSpaceId = spaceMapping[event.location] || '';
+      
       if (
         eventDate.getFullYear() === currentYear &&
         eventDate.getMonth() === currentMonthNum &&
-        eventDate.getDate() === day
+        eventDate.getDate() === day &&
+        (spaceId === 'all' || eventSpaceId === spaceId)
       ) {
-        eventsForDay.push(event.title);
+        eventsForDay.push({
+          ...event,
+          spaceId: eventSpaceId
+        });
       }
     });
     
@@ -206,12 +225,25 @@ const CalendarDashboard = () => {
         const isToday = new Date().toDateString() === current.toDateString();
         const isSelected = selectedDate && selectedDate.toDateString() === current.toDateString();
         
+        // Get events for all spaces on this day
+        const spacesWithEvents: Record<string, any[]> = {};
+        
+        availableSpaces.forEach(space => {
+          const eventsForSpace = isCurrentMonth 
+            ? getEventsForDayAndSpace(current.getDate(), space.id)
+            : [];
+          
+          if (eventsForSpace.length > 0) {
+            spacesWithEvents[space.id] = eventsForSpace;
+          }
+        });
+        
         week.push({
           day: current.getDate(),
           isCurrentMonth,
           isToday,
           isSelected,
-          events: isCurrentMonth ? getEventsForDay(current.getDate()) : []
+          spacesWithEvents
         });
         day++;
       }
@@ -333,29 +365,13 @@ const CalendarDashboard = () => {
                 />
               </div>
             </div>
-
-            {/* Adicionar toggle para calendário por espaço */}
-            <div className="flex justify-end mt-4">
-              <Tabs value={viewMode === 'space' ? 'space' : 'regular'} onValueChange={(v) => setViewMode(v === 'space' ? 'space' : 'calendar')}>
-                <TabsList>
-                  <TabsTrigger value="regular">Calendário Regular</TabsTrigger>
-                  <TabsTrigger value="space">Calendário por Espaço</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
           </CardContent>
         </Card>
-
-        {/* Selector de espaço - visível apenas quando o viewMode é 'space' */}
-        {viewMode === 'space' && (
-          <div className="mb-4">
-            <SpaceFilter value={selectedSpaceId} onValueChange={setSelectedSpaceId} />
-          </div>
-        )}
 
         {/* View Modes */}
         <div className="mb-6">
           {viewMode === 'list' && (
+            
             <div className="space-y-4">
               {filteredEvents.length > 0 ? (
                 filteredEvents.map(event => (
@@ -396,6 +412,7 @@ const CalendarDashboard = () => {
           )}
           
           {viewMode === 'grid' && (
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.length > 0 ? (
                 filteredEvents.map(event => (
@@ -436,7 +453,7 @@ const CalendarDashboard = () => {
           {viewMode === 'calendar' && (
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
-                <Tabs defaultValue="month">
+                <Tabs defaultValue="month" value={calendarView} onValueChange={(v) => setCalendarView(v as 'day' | 'week' | 'month')}>
                   <TabsList className="mb-6">
                     <TabsTrigger value="day">Dia</TabsTrigger>
                     <TabsTrigger value="week">Semana</TabsTrigger>
@@ -456,6 +473,25 @@ const CalendarDashboard = () => {
                       </Button>
                     </div>
 
+                    {/* Legend for spaces */}
+                    <div className="mb-4 flex flex-wrap gap-2">
+                      {availableSpaces.map(space => (
+                        <div key={space.id} className="flex items-center">
+                          <div 
+                            className="w-3 h-3 rounded mr-1" 
+                            style={{ 
+                              backgroundColor: space.id === 'auditorio-principal' ? '#0091DA' : 
+                                               space.id === 'sala-reunioes-a' ? '#00A3A1' : 
+                                               space.id === 'sala-reunioes-b' ? '#8A8D8F' : 
+                                               space.id === 'espaco-colaborativo' ? '#92D400' :
+                                               space.id === 'sala-treinamento' ? '#BF5700' : '#702082'
+                            }}
+                          />
+                          <span className="text-xs">{space.name}</span>
+                        </div>
+                      ))}
+                    </div>
+
                     <div className="grid grid-cols-7 gap-1">
                       {/* Calendar header */}
                       {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
@@ -464,30 +500,52 @@ const CalendarDashboard = () => {
                         </div>
                       ))}
                       
-                      {/* Calendar grid */}
+                      {/* Calendar grid with space visualization */}
                       {calendar.map((week, weekIndex) => (
                         week.map((day, dayIndex) => (
                           <div 
                             key={`${weekIndex}-${dayIndex}`} 
                             className={`
-                              min-h-[100px] p-2 border border-gray-200
+                              min-h-[120px] p-2 border border-gray-200
                               ${day.isToday ? 'bg-blue-50' : 'bg-white'}
                               ${!day.isCurrentMonth ? 'text-gray-400' : ''}
                               ${day.isSelected ? 'ring-2 ring-kpmg-blue' : ''}
                             `}
                             onClick={() => setSelectedDate(new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day.day))}
                           >
-                            <div className="font-medium">{day.day}</div>
-                            <div className="mt-1 space-y-1">
-                              {day.events.map((eventTitle, index) => (
-                                <div 
-                                  key={index} 
-                                  className="text-xs p-1 bg-kpmg-blue text-white rounded truncate"
-                                  title={eventTitle}
-                                >
-                                  {eventTitle.length > 20 ? `${eventTitle.substring(0, 18)}...` : eventTitle}
-                                </div>
-                              ))}
+                            <div className="font-medium mb-1">{day.day}</div>
+                            
+                            {/* Space events visualization */}
+                            <div className="space-y-1">
+                              {Object.entries(day.spacesWithEvents).map(([spaceId, events]) => {
+                                // Find the space details
+                                const space = availableSpaces.find(s => s.id === spaceId);
+                                if (!space) return null;
+                                
+                                // Determine color based on space
+                                let bgColor;
+                                switch(spaceId) {
+                                  case 'auditorio-principal': bgColor = '#0091DA'; break;
+                                  case 'sala-reunioes-a': bgColor = '#00A3A1'; break;
+                                  case 'sala-reunioes-b': bgColor = '#8A8D8F'; break;
+                                  case 'espaco-colaborativo': bgColor = '#92D400'; break;
+                                  case 'sala-treinamento': bgColor = '#BF5700'; break;
+                                  default: bgColor = '#702082';
+                                }
+                                
+                                return events.map((event: any, index: number) => (
+                                  <div 
+                                    key={`${event.id}-${index}`}
+                                    className="text-xs p-1 rounded truncate" 
+                                    style={{ backgroundColor: bgColor }}
+                                  >
+                                    <div className="text-white truncate" title={`${event.title} (${space.name})`}>
+                                      {event.title.length > 14 ? `${event.title.substring(0, 12)}...` : event.title}
+                                    </div>
+                                    <div className="text-white text-xs">{event.time.split(' - ')[0]}</div>
+                                  </div>
+                                ));
+                              })}
                             </div>
                           </div>
                         ))
@@ -495,30 +553,121 @@ const CalendarDashboard = () => {
                     </div>
                   </TabsContent>
                   
-                  <TabsContent value="week" className="text-center py-12 text-gray-500">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p>Visão de semana será implementada em uma versão futura.</p>
+                  <TabsContent value="week">
+                    <div className="flex justify-between items-center mb-6">
+                      <Button variant="outline" size="sm" onClick={prevMonth}>
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <h3 className="text-lg font-medium">
+                        Semana de {selectedDate ? selectedDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' }) : new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' })}
+                      </h3>
+                      <Button variant="outline" size="sm" onClick={nextMonth}>
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    {/* Week view implementation will go here */}
+                    <div className="grid grid-cols-7 gap-2">
+                      {/* Headers for days of the week */}
+                      {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+                        <div key={day} className="text-center font-medium p-2 bg-gray-100 rounded">
+                          {day}
+                        </div>
+                      ))}
+                      
+                      {/* Content for each day in the week */}
+                      {Array(7).fill(0).map((_, i) => (
+                        <div key={i} className="h-96 border border-gray-200 p-2 rounded overflow-y-auto">
+                          <h4 className="font-medium mb-1">
+                            {new Date(currentMonth.getFullYear(), currentMonth.getMonth(), currentMonth.getDate() - currentMonth.getDay() + i).getDate()}
+                          </h4>
+                          
+                          {/* Space slots */}
+                          <div className="space-y-4 mt-2">
+                            {availableSpaces.map(space => (
+                              <div 
+                                key={space.id} 
+                                className="text-xs p-2 rounded shadow-sm" 
+                                style={{ 
+                                  backgroundColor: 
+                                    space.id === 'auditorio-principal' ? '#0091DA30' : 
+                                    space.id === 'sala-reunioes-a' ? '#00A3A130' : 
+                                    space.id === 'sala-reunioes-b' ? '#8A8D8F30' : 
+                                    space.id === 'espaco-colaborativo' ? '#92D40030' :
+                                    space.id === 'sala-treinamento' ? '#BF570030' : '#70208230'
+                                }}
+                              >
+                                <div className="font-medium">{space.name}</div>
+                                <div className="mt-1">
+                                  {/* Here we would render events for this space on this day */}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </TabsContent>
                   
-                  <TabsContent value="day" className="text-center py-12 text-gray-500">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p>Visão de dia será implementada em uma versão futura.</p>
+                  <TabsContent value="day">
+                    <div className="flex justify-between items-center mb-6">
+                      <Button variant="outline" size="sm" onClick={prevMonth}>
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <h3 className="text-lg font-medium">
+                        {selectedDate ? selectedDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+                      </h3>
+                      <Button variant="outline" size="sm" onClick={nextMonth}>
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
+                    {/* Day view implementation */}
+                    <div className="border rounded-lg">
+                      <div className="grid grid-cols-7 border-b">
+                        <div className="col-span-1 p-2 border-r">
+                          Hora
+                        </div>
+                        <div className="col-span-6 p-2">
+                          Espaços
+                        </div>
+                      </div>
+                      
+                      {/* Time slots */}
+                      {['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map(time => (
+                        <div key={time} className="grid grid-cols-7 border-b">
+                          <div className="col-span-1 p-2 border-r text-sm">
+                            {time}
+                          </div>
+                          <div className="col-span-6 p-2">
+                            <div className="grid grid-cols-6 gap-1">
+                              {availableSpaces.map(space => (
+                                <div
+                                  key={space.id}
+                                  className="h-8 border border-dashed border-gray-300 rounded relative"
+                                  style={{ 
+                                    backgroundColor: 
+                                      space.id === 'auditorio-principal' ? '#0091DA10' : 
+                                      space.id === 'sala-reunioes-a' ? '#00A3A110' : 
+                                      space.id === 'sala-reunioes-b' ? '#8A8D8F10' : 
+                                      space.id === 'espaco-colaborativo' ? '#92D40010' :
+                                      space.id === 'sala-treinamento' ? '#BF570010' : '#70208210'
+                                  }}
+                                >
+                                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+                                    <span className="text-xs text-gray-500">{space.name}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
             </Card>
-          )}
-
-          {/* Nova visão de calendário por espaço */}
-          {viewMode === 'space' && (
-            <SpaceCalendarView 
-              currentMonth={currentMonth}
-              onPrevMonth={prevMonth}
-              onNextMonth={nextMonth}
-              events={filteredEvents}
-              selectedSpaceId={selectedSpaceId}
-              onSelectDate={setSelectedDate}
-            />
           )}
         </div>
       </div>
