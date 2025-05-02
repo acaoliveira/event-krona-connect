@@ -104,9 +104,15 @@ const Configurations = () => {
       setIsEditing(null);
     } else {
       // Add new space
+      // Ensure all required fields are present by explicitly specifying them
       const newSpace: Space = {
         id: `${Date.now()}`,
-        ...values
+        name: values.name,
+        description: values.description,
+        maxCapacity: values.maxCapacity,
+        isActive: values.isActive,
+        location: values.location,
+        hasAccessibility: values.hasAccessibility
       };
       setSpaces([...spaces, newSpace]);
       toast.success('Espaço adicionado com sucesso!');
