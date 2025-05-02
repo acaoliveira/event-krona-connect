@@ -15,8 +15,19 @@ import { Edit, Plus, Trash } from 'lucide-react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+// Define the Space type explicitly
+type Space = {
+  id: string;
+  name: string;
+  description: string;
+  maxCapacity: number;
+  isActive: boolean;
+  location: string;
+  hasAccessibility: boolean;
+};
+
 // Mock data for spaces/resources
-const mockSpaces = [
+const mockSpaces: Space[] = [
   {
     id: '1',
     name: 'Auditório Principal',
@@ -68,7 +79,7 @@ const spaceSchema = z.object({
 type SpaceFormValues = z.infer<typeof spaceSchema>;
 
 const Configurations = () => {
-  const [spaces, setSpaces] = useState(mockSpaces);
+  const [spaces, setSpaces] = useState<Space[]>(mockSpaces);
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
   const form = useForm<SpaceFormValues>({
@@ -87,13 +98,13 @@ const Configurations = () => {
     if (isEditing) {
       // Update existing space
       setSpaces(spaces.map(space => 
-        space.id === isEditing ? { ...values, id: space.id } : space
+        space.id === isEditing ? { ...values, id: space.id } as Space : space
       ));
       toast.success('Espaço atualizado com sucesso!');
       setIsEditing(null);
     } else {
       // Add new space
-      const newSpace = {
+      const newSpace: Space = {
         id: `${Date.now()}`,
         ...values
       };
