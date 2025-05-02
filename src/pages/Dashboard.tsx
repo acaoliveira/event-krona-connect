@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -154,7 +153,7 @@ const Dashboard = () => {
                 <SelectValue placeholder="Tipo de Evento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="workshop">Todos os tipos</SelectItem>
+                <SelectItem value="all_types">Todos os tipos</SelectItem>
                 <SelectItem value="Workshop">Workshop</SelectItem>
                 <SelectItem value="Seminário">Seminário</SelectItem>
                 <SelectItem value="Conferência">Conferência</SelectItem>

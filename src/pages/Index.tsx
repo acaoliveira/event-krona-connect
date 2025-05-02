@@ -146,12 +146,22 @@ const Index = () => {
   
   return (
     <MainLayout>
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-kpmg-blue to-kpmg-lightblue text-white">
-        <div className="absolute inset-0 bg-black opacity-20"></div>
+      {/* Hero Section with background image */}
+      <section className="relative">
+        {/* Background image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+          style={{ 
+            backgroundImage: "url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?ixlib=rb-4.0.3&auto=format&fit=crop&q=80')",
+            backgroundPosition: "center 30%"
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-kpmg-blue/90 to-kpmg-lightblue/80"></div>
+        </div>
+        
         <div className="relative container mx-auto px-4 py-20 md:py-32">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-white">
               Descubra Eventos Inspiradores
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-white/90">

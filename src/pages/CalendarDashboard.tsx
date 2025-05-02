@@ -14,11 +14,14 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import SpaceFilter from '@/components/calendar/SpaceFilter';
+import SpaceCalendarView from '@/components/calendar/SpaceCalendarView';
 
 const CalendarDashboard = () => {
-  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('calendar');
+  const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar' | 'space'>('calendar');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedSpaceId, setSelectedSpaceId] = useState('all');
   const [filters, setFilters] = useState({
     eventType: '',
     dateFrom: '',
@@ -69,6 +72,36 @@ const CalendarDashboard = () => {
       audience: 'Externo',
       status: 'Aprovado',
     },
+    {
+      id: '5',
+      title: 'Treinamento de Liderança',
+      date: '2025-05-25',
+      time: '13:00 - 18:00',
+      location: 'Sala de Treinamento',
+      category: 'Treinamento',
+      audience: 'Interno',
+      status: 'Aprovado',
+    },
+    {
+      id: '6',
+      title: 'Design Thinking Workshop',
+      date: '2025-05-22',
+      time: '09:00 - 12:00',
+      location: 'Lounge',
+      category: 'Workshop',
+      audience: 'Interno',
+      status: 'Aprovado',
+    },
+    {
+      id: '7',
+      title: 'Reunião de Planejamento Q3',
+      date: '2025-06-10',
+      time: '14:00 - 16:00',
+      location: 'Sala de Reuniões B',
+      category: 'Reunião',
+      audience: 'Interno',
+      status: 'Em análise',
+    }
   ];
 
   const handleFilterChange = (key: string, value: string) => {
@@ -300,8 +333,25 @@ const CalendarDashboard = () => {
                 />
               </div>
             </div>
+
+            {/* Adicionar toggle para calendário por espaço */}
+            <div className="flex justify-end mt-4">
+              <Tabs value={viewMode === 'space' ? 'space' : 'regular'} onValueChange={(v) => setViewMode(v === 'space' ? 'space' : 'calendar')}>
+                <TabsList>
+                  <TabsTrigger value="regular">Calendário Regular</TabsTrigger>
+                  <TabsTrigger value="space">Calendário por Espaço</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </CardContent>
         </Card>
+
+        {/* Selector de espaço - visível apenas quando o viewMode é 'space' */}
+        {viewMode === 'space' && (
+          <div className="mb-4">
+            <SpaceFilter value={selectedSpaceId} onValueChange={setSelectedSpaceId} />
+          </div>
+        )}
 
         {/* View Modes */}
         <div className="mb-6">
@@ -457,6 +507,18 @@ const CalendarDashboard = () => {
                 </Tabs>
               </CardContent>
             </Card>
+          )}
+
+          {/* Nova visão de calendário por espaço */}
+          {viewMode === 'space' && (
+            <SpaceCalendarView 
+              currentMonth={currentMonth}
+              onPrevMonth={prevMonth}
+              onNextMonth={nextMonth}
+              events={filteredEvents}
+              selectedSpaceId={selectedSpaceId}
+              onSelectDate={setSelectedDate}
+            />
           )}
         </div>
       </div>
