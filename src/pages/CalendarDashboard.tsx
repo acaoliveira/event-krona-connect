@@ -250,7 +250,7 @@ const CalendarDashboard = () => {
                   <SelectValue placeholder="Tipo de Evento" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os tipos</SelectItem>
+                  <SelectItem value="all_types">Todos os tipos</SelectItem>
                   <SelectItem value="Workshop">Workshop</SelectItem>
                   <SelectItem value="Seminário">Seminário</SelectItem>
                   <SelectItem value="Conferência">Conferência</SelectItem>
@@ -263,7 +263,7 @@ const CalendarDashboard = () => {
                   <SelectValue placeholder="Público-Alvo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os públicos</SelectItem>
+                  <SelectItem value="all_audiences">Todos os públicos</SelectItem>
                   <SelectItem value="Interno">Interno</SelectItem>
                   <SelectItem value="Externo">Externo</SelectItem>
                   <SelectItem value="Híbrido">Híbrido</SelectItem>
@@ -275,7 +275,7 @@ const CalendarDashboard = () => {
                   <SelectValue placeholder="Espaço" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os espaços</SelectItem>
+                  <SelectItem value="all_spaces">Todos os espaços</SelectItem>
                   <SelectItem value="Auditório Principal">Auditório Principal</SelectItem>
                   <SelectItem value="Sala de Reuniões A">Sala de Reuniões A</SelectItem>
                   <SelectItem value="Espaço Colaborativo">Espaço Colaborativo</SelectItem>

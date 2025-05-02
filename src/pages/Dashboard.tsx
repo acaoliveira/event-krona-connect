@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -154,7 +153,7 @@ const Dashboard = () => {
                 <SelectValue placeholder="Tipo de Evento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os tipos</SelectItem>
+                <SelectItem value="all_types">Todos os tipos</SelectItem>
                 <SelectItem value="Workshop">Workshop</SelectItem>
                 <SelectItem value="Seminário">Seminário</SelectItem>
                 <SelectItem value="Conferência">Conferência</SelectItem>
@@ -175,7 +174,7 @@ const Dashboard = () => {
                 <SelectValue placeholder="Público-Alvo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os públicos</SelectItem>
+                <SelectItem value="all_audiences">Todos os públicos</SelectItem>
                 <SelectItem value="Interno">Interno</SelectItem>
                 <SelectItem value="Externo">Externo</SelectItem>
                 <SelectItem value="Híbrido">Híbrido</SelectItem>
@@ -187,7 +186,7 @@ const Dashboard = () => {
                 <SelectValue placeholder="Localização" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todas as localizações</SelectItem>
+                <SelectItem value="all_locations">Todas as localizações</SelectItem>
                 <SelectItem value="São Paulo">São Paulo</SelectItem>
                 <SelectItem value="Rio de Janeiro">Rio de Janeiro</SelectItem>
                 <SelectItem value="Belo Horizonte">Belo Horizonte</SelectItem>
