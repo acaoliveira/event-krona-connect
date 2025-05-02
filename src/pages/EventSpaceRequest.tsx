@@ -88,6 +88,29 @@ const EventSpaceRequest = () => {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
+                  {/* Moved Espaço Desejado to the top with enhanced styling */}
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <label htmlFor="desiredSpace" className="block text-lg font-medium text-kpmg-blue mb-2">Espaço Desejado</label>
+                    <Select 
+                      onValueChange={(value) => handleChange('desiredSpace', value)}
+                      value={eventData.desiredSpace}
+                    >
+                      <SelectTrigger className="text-base">
+                        <SelectValue placeholder="Selecione o espaço desejado" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableSpaces.map((space) => (
+                          <SelectItem key={space.id} value={space.id}>
+                            {space.name} (Capacidade: {space.capacity})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-blue-600 mt-2">
+                      Selecione primeiro o espaço para verificar a disponibilidade no calendário
+                    </p>
+                  </div>
+
                   <div>
                     <label htmlFor="eventName" className="block text-sm font-medium mb-1">Nome do Evento</label>
                     <Input 
@@ -161,25 +184,6 @@ const EventSpaceRequest = () => {
                         required 
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="desiredSpace" className="block text-sm font-medium mb-1">Espaço Desejado</label>
-                    <Select 
-                      onValueChange={(value) => handleChange('desiredSpace', value)}
-                      value={eventData.desiredSpace}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o espaço desejado" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSpaces.map((space) => (
-                          <SelectItem key={space.id} value={space.id}>
-                            {space.name} (Capacidade: {space.capacity})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
                   </div>
 
                   <div>
