@@ -153,7 +153,7 @@ const EventListing = () => {
                 <SelectValue placeholder="Tipo de Evento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os tipos</SelectItem>
+                <SelectItem value="all">Todos os tipos</SelectItem>
                 <SelectItem value="Workshop">Workshop</SelectItem>
                 <SelectItem value="Seminário">Seminário</SelectItem>
                 <SelectItem value="Conferência">Conferência</SelectItem>
@@ -174,7 +174,7 @@ const EventListing = () => {
                 <SelectValue placeholder="Público-Alvo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os públicos</SelectItem>
+                <SelectItem value="all">Todos os públicos</SelectItem>
                 <SelectItem value="Interno">Interno</SelectItem>
                 <SelectItem value="Externo">Externo</SelectItem>
                 <SelectItem value="Híbrido">Híbrido</SelectItem>
@@ -186,7 +186,7 @@ const EventListing = () => {
                 <SelectValue placeholder="Localização" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as localizações</SelectItem>
+                <SelectItem value="all">Todas as localizações</SelectItem>
                 <SelectItem value="São Paulo">São Paulo</SelectItem>
                 <SelectItem value="Rio de Janeiro">Rio de Janeiro</SelectItem>
                 <SelectItem value="Belo Horizonte">Belo Horizonte</SelectItem>
