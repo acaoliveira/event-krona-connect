@@ -16,6 +16,7 @@ import DashboardIndicators from "./pages/DashboardIndicators";
 import EventSpaceRequest from "./pages/EventSpaceRequest";
 import EventDetail from "./pages/EventDetail";
 import CalendarDashboard from "./pages/CalendarDashboard";
+import Configurations from "./pages/Configurations";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/dashboard/solicitacoes" element={<EventRequests />} />
           <Route path="/dashboard/solicitacoes/:id" element={<EventRequestDetail />} />
           <Route path="/dashboard/indicadores" element={<DashboardIndicators />} />
+          <Route path="/dashboard/configuracoes" element={<Configurations />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
