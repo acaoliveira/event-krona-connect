@@ -11,7 +11,11 @@ import EventListing from "./pages/EventListing";
 import NotFound from "./pages/NotFound";
 import Dashboard from "./pages/Dashboard";
 import EventRequests from "./pages/EventRequests";
+import EventRequestDetail from "./pages/EventRequestDetail";
 import DashboardIndicators from "./pages/DashboardIndicators";
+import EventSpaceRequest from "./pages/EventSpaceRequest";
+import EventDetail from "./pages/EventDetail";
+import CalendarDashboard from "./pages/CalendarDashboard";
 
 const queryClient = new QueryClient();
 
@@ -26,10 +30,13 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/events" element={<EventListing />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/event-space-request" element={<EventSpaceRequest />} />
           
           {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<CalendarDashboard />} />
           <Route path="/dashboard/solicitacoes" element={<EventRequests />} />
+          <Route path="/dashboard/solicitacoes/:id" element={<EventRequestDetail />} />
           <Route path="/dashboard/indicadores" element={<DashboardIndicators />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
