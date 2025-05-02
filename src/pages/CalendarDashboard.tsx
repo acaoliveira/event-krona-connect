@@ -19,6 +19,7 @@ const CalendarDashboard = () => {
   const [viewMode, setViewMode] = useState<'list' | 'grid' | 'calendar'>('calendar');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedSpace, setSelectedSpace] = useState<string>('all');
   const [filters, setFilters] = useState({
     eventType: '',
     dateFrom: '',
@@ -26,6 +27,15 @@ const CalendarDashboard = () => {
     space: '',
     audience: '',
   });
+
+  // Mock data for spaces
+  const spaces = [
+    { id: 'aud1', name: 'Auditório Principal', capacity: 200 },
+    { id: 'sala1', name: 'Sala de Reuniões A', capacity: 30 },
+    { id: 'esp1', name: 'Espaço Colaborativo', capacity: 50 },
+    { id: 'aud2', name: 'Auditório Secundário', capacity: 100 },
+    { id: 'sala2', name: 'Sala de Reuniões B', capacity: 20 },
+  ];
 
   // Mock data for events
   const events = [
@@ -35,6 +45,7 @@ const CalendarDashboard = () => {
       date: '2025-05-15',
       time: '09:00 - 17:00',
       location: 'Auditório Principal',
+      spaceId: 'aud1',
       category: 'Workshop',
       audience: 'Externo',
       status: 'Aprovado',
@@ -45,6 +56,7 @@ const CalendarDashboard = () => {
       date: '2025-05-20',
       time: '14:00 - 18:00',
       location: 'Sala de Reuniões A',
+      spaceId: 'sala1',
       category: 'Seminário',
       audience: 'Interno',
       status: 'Aprovado',
@@ -55,6 +67,7 @@ const CalendarDashboard = () => {
       date: '2025-06-05',
       time: '10:00 - 16:00',
       location: 'Espaço Colaborativo',
+      spaceId: 'esp1',
       category: 'Fórum',
       audience: 'Híbrido',
       status: 'Em análise',
@@ -65,8 +78,31 @@ const CalendarDashboard = () => {
       date: '2025-06-15',
       time: '09:00 - 18:00',
       location: 'Auditório Principal',
+      spaceId: 'aud1',
       category: 'Conferência',
       audience: 'Externo',
+      status: 'Aprovado',
+    },
+    {
+      id: '5',
+      title: 'Reunião de Planejamento Estratégico',
+      date: '2025-05-18',
+      time: '13:00 - 15:00',
+      location: 'Sala de Reuniões B',
+      spaceId: 'sala2',
+      category: 'Reunião',
+      audience: 'Interno',
+      status: 'Aprovado',
+    },
+    {
+      id: '6',
+      title: 'Treinamento de Liderança',
+      date: '2025-05-25',
+      time: '09:00 - 12:00',
+      location: 'Auditório Secundário',
+      spaceId: 'aud2',
+      category: 'Treinamento',
+      audience: 'Interno',
       status: 'Aprovado',
     },
   ];
@@ -82,6 +118,7 @@ const CalendarDashboard = () => {
     const matchesEventType = !filters.eventType || event.category === filters.eventType;
     const matchesAudience = !filters.audience || event.audience === filters.audience;
     const matchesSpace = !filters.space || event.location.includes(filters.space);
+    const matchesSelectedSpace = selectedSpace === 'all' || event.spaceId === selectedSpace;
     
     // Date filtering logic
     const eventDate = new Date(event.date);
@@ -91,7 +128,7 @@ const CalendarDashboard = () => {
     const matchesDateFrom = !dateFrom || eventDate >= dateFrom;
     const matchesDateTo = !dateTo || eventDate <= dateTo;
     
-    return matchesEventType && matchesAudience && matchesSpace && matchesDateFrom && matchesDateTo;
+    return matchesEventType && matchesAudience && matchesSpace && matchesDateFrom && matchesDateTo && matchesSelectedSpace;
   });
 
   // Function to get events for a specific day (used in calendar view)
@@ -255,6 +292,8 @@ const CalendarDashboard = () => {
                   <SelectItem value="Seminário">Seminário</SelectItem>
                   <SelectItem value="Conferência">Conferência</SelectItem>
                   <SelectItem value="Fórum">Fórum</SelectItem>
+                  <SelectItem value="Reunião">Reunião</SelectItem>
+                  <SelectItem value="Treinamento">Treinamento</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -279,6 +318,8 @@ const CalendarDashboard = () => {
                   <SelectItem value="Auditório Principal">Auditório Principal</SelectItem>
                   <SelectItem value="Sala de Reuniões A">Sala de Reuniões A</SelectItem>
                   <SelectItem value="Espaço Colaborativo">Espaço Colaborativo</SelectItem>
+                  <SelectItem value="Auditório Secundário">Auditório Secundário</SelectItem>
+                  <SelectItem value="Sala de Reuniões B">Sala de Reuniões B</SelectItem>
                 </SelectContent>
               </Select>
               
@@ -391,17 +432,18 @@ const CalendarDashboard = () => {
                     <TabsTrigger value="day">Dia</TabsTrigger>
                     <TabsTrigger value="week">Semana</TabsTrigger>
                     <TabsTrigger value="month">Mês</TabsTrigger>
+                    <TabsTrigger value="space">Espaço</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="month">
                     <div className="flex justify-between items-center mb-6">
-                      <Button variant="outline" size="sm" onClick={prevMonth}>
+                      <Button variant="outline" size="sm" onClick={prevMonth} className="border-kpmg-blue text-kpmg-blue hover:bg-kpmg-blue hover:text-white">
                         <ChevronLeft className="h-4 w-4" />
                       </Button>
                       <h3 className="text-lg font-medium">
                         {currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
                       </h3>
-                      <Button variant="outline" size="sm" onClick={nextMonth}>
+                      <Button variant="outline" size="sm" onClick={nextMonth} className="border-kpmg-blue text-kpmg-blue hover:bg-kpmg-blue hover:text-white">
                         <ChevronRight className="h-4 w-4" />
                       </Button>
                     </div>
@@ -453,6 +495,94 @@ const CalendarDashboard = () => {
                   <TabsContent value="day" className="text-center py-12 text-gray-500">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                     <p>Visão de dia será implementada em uma versão futura.</p>
+                  </TabsContent>
+                  
+                  <TabsContent value="space">
+                    <div className="mb-6">
+                      <Select 
+                        value={selectedSpace}
+                        onValueChange={setSelectedSpace}
+                      >
+                        <SelectTrigger className="max-w-xs">
+                          <SelectValue placeholder="Selecione um espaço" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos os espaços</SelectItem>
+                          {spaces.map(space => (
+                            <SelectItem key={space.id} value={space.id}>
+                              {space.name} (Cap: {space.capacity})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex justify-between items-center mb-6">
+                      <Button variant="outline" size="sm" onClick={prevMonth} className="border-kpmg-blue text-kpmg-blue hover:bg-kpmg-blue hover:text-white">
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <h3 className="text-lg font-medium">
+                        {currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                      </h3>
+                      <Button variant="outline" size="sm" onClick={nextMonth} className="border-kpmg-blue text-kpmg-blue hover:bg-kpmg-blue hover:text-white">
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr>
+                            <th className="p-2 bg-gray-50 border border-gray-200">Espaço</th>
+                            {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }, (_, i) => i + 1).map(day => (
+                              <th key={day} className={`p-2 text-center border border-gray-200 ${
+                                new Date().getDate() === day && 
+                                new Date().getMonth() === currentMonth.getMonth() && 
+                                new Date().getFullYear() === currentMonth.getFullYear() ? 'bg-blue-50' : 'bg-gray-50'
+                              }`}>
+                                {day}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(selectedSpace === 'all' ? spaces : spaces.filter(s => s.id === selectedSpace)).map(space => (
+                            <tr key={space.id}>
+                              <td className="p-2 border border-gray-200 font-medium">{space.name}</td>
+                              {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }, (_, i) => i + 1).map(day => {
+                                const eventsForDay = filteredEvents.filter(event => {
+                                  const eventDate = new Date(event.date);
+                                  return (
+                                    eventDate.getDate() === day && 
+                                    eventDate.getMonth() === currentMonth.getMonth() && 
+                                    eventDate.getFullYear() === currentMonth.getFullYear() &&
+                                    event.spaceId === space.id
+                                  );
+                                });
+                                
+                                return (
+                                  <td key={day} className="p-1 border border-gray-200 min-w-[80px] h-[80px] align-top">
+                                    {eventsForDay.length > 0 && (
+                                      <div className="space-y-1">
+                                        {eventsForDay.map(event => (
+                                          <div 
+                                            key={event.id} 
+                                            className="text-xs p-1 bg-kpmg-blue text-white rounded truncate cursor-pointer"
+                                            title={`${event.title} - ${event.time}`}
+                                          >
+                                            {event.title.length > 12 ? `${event.title.substring(0, 10)}...` : event.title}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>

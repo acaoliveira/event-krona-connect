@@ -1,3 +1,4 @@
+/* This file is kept for compatibility, but most styling is now handled through Tailwind CSS */
 #root {
   max-width: 1280px;
   margin: 0 auto;
