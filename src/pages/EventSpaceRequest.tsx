@@ -6,13 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Calendar } from 'lucide-react';
+import { Calendar as CalendarIcon } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import SpaceFilter from '@/components/calendar/SpaceFilter';
+import AvailabilityCalendar from '@/components/calendar/AvailabilityCalendar';
 
 const EventSpaceRequest = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCalendarView, setSelectedCalendarView] = useState<'day' | 'week' | 'month'>('month');
   const [eventData, setEventData] = useState({
     eventName: '',
     eventType: '',
@@ -27,10 +30,10 @@ const EventSpaceRequest = () => {
 
   // Mock data for available spaces
   const availableSpaces = [
-    { id: '1', name: 'Auditório Principal', capacity: 200 },
-    { id: '2', name: 'Sala de Reuniões A', capacity: 50 },
-    { id: '3', name: 'Espaço Colaborativo', capacity: 100 },
-    { id: '4', name: 'Sala de Conferência B', capacity: 80 }
+    { id: '1', name: 'Auditório Principal', capacity: 200, spaceId: 'auditorio-principal' },
+    { id: '2', name: 'Sala de Reuniões A', capacity: 50, spaceId: 'sala-reunioes-a' },
+    { id: '3', name: 'Espaço Colaborativo', capacity: 100, spaceId: 'espaco-colaborativo' },
+    { id: '4', name: 'Sala de Conferência B', capacity: 80, spaceId: 'sala-reunioes-b' }
   ];
 
   const handleChange = (field: string, value: string) => {
@@ -59,6 +62,12 @@ const EventSpaceRequest = () => {
         description: "Sua solicitação de espaço foi enviada e está em análise",
       });
     }, 1500);
+  };
+
+  // Find the space ID for the selected space
+  const getSelectedSpaceId = () => {
+    const selectedSpace = availableSpaces.find(space => space.id === eventData.desiredSpace);
+    return selectedSpace?.spaceId || 'all';
   };
 
   return (
@@ -214,27 +223,39 @@ const EventSpaceRequest = () => {
                 <CardTitle className="text-xl text-kpmg-blue">Disponibilidade</CardTitle>
               </CardHeader>
               <CardContent>
-                <Tabs defaultValue="month">
+                <Tabs 
+                  defaultValue="month" 
+                  value={selectedCalendarView}
+                  onValueChange={(value) => setSelectedCalendarView(value as 'day' | 'week' | 'month')}
+                >
                   <TabsList className="mb-6">
                     <TabsTrigger value="day">Dia</TabsTrigger>
                     <TabsTrigger value="week">Semana</TabsTrigger>
                     <TabsTrigger value="month">Mês</TabsTrigger>
                   </TabsList>
                   
-                  <TabsContent value="month" className="text-center">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-sm">Selecione um espaço para visualizar o calendário de disponibilidade</p>
-                  </TabsContent>
-                  
-                  <TabsContent value="week" className="text-center">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-sm">Visão semanal disponível após selecionar um espaço</p>
-                  </TabsContent>
-                  
-                  <TabsContent value="day" className="text-center">
-                    <Calendar className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <p className="text-gray-500 text-sm">Visão diária disponível após selecionar um espaço</p>
-                  </TabsContent>
+                  {eventData.desiredSpace ? (
+                    <>
+                      <AvailabilityCalendar 
+                        spaceId={getSelectedSpaceId()} 
+                        mode={selectedCalendarView} 
+                      />
+                      <p className="text-xs text-gray-500 mt-4 text-center">
+                        Os dados de disponibilidade são atualizados em tempo real. 
+                        Selecione o espaço e período desejado para verificar a disponibilidade.
+                      </p>
+                    </>
+                  ) : (
+                    <div className="text-center py-8">
+                      <CalendarIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <p className="text-gray-500 text-sm mb-2">
+                        Selecione um espaço para visualizar o calendário de disponibilidade
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        O calendário mostrará os dias disponíveis e ocupados para o espaço selecionado
+                      </p>
+                    </div>
+                  )}
                 </Tabs>
               </CardContent>
             </Card>

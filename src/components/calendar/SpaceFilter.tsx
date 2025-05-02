@@ -20,7 +20,7 @@ const SpaceFilter = ({ value, onValueChange }: SpaceFilterProps) => {
   
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger>
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Selecione um espaço" />
       </SelectTrigger>
       <SelectContent>
